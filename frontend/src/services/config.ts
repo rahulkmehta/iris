@@ -2,7 +2,7 @@
 
 // API base URL - can be overridden with environment variables
 // export const API_BASE_URL = "https://vibesearch-backend-6gqa3.ondigitalocean.app";
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://shark-app-j7um2.ondigitalocean.app";
 console.log("API_BASE_URL", API_BASE_URL);
 
 // API endpoints
