@@ -10,8 +10,8 @@ def create_app():
         app,
         origins=[
             "https://iris-sigma-ebon.vercel.app",
-            "https://iris-c3c5ryndc-rahulkmehtas-projects.vercel.app",  # Add new Vercel URL
             "http://localhost:8080",
+            "http://localhost:8081",
             "http://localhost:4173",
             "*.vercel.app"
         ],
