@@ -88,7 +88,7 @@ def search():
             filter_dict = None
 
         # Apply pagination (optional, if supported by search_apartments)
-        results = search_apartments(query, filter_dict, top_k, image_urls)
+        results = search_apartments(query, filter_dict, top_k, image_urls, page)
 
         print(f"DEBUG: Search completed, returned {len(results)} results")
         print(f"DEBUG: Results: {results}")
