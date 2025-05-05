@@ -8,7 +8,7 @@ import traceback
 
 search_bp = Blueprint("search", __name__)
 
-@search_bp.route("/api/search", methods=["GET"])
+@search_bp.route("/api/search", methods=["GET", "OPTIONS"])
 def search():
     """
     Search for apartments based on text query, image URLs, and optional filters.
@@ -17,6 +17,7 @@ def search():
         query (str, optional): Text search query to match against apartment descriptions
         imageUrls (str, optional): JSON string containing array of image URLs for visual search
         limit (int, optional): Maximum number of results to return (default: 50)
+        page (int, optional): Page number for pagination (not currently used)
         
     Filter Parameters:
         min_price (float, optional): Minimum price filter
@@ -34,6 +35,9 @@ def search():
     Example:
         GET /api/search?query=modern&min_price=1000&max_price=3000&min_bedrooms=2
     """
+    if request.method == "OPTIONS":
+        return jsonify({}), 200  # Handle CORS pre-flight
+
     try:
         print(f"DEBUG: Request parameters: {dict(request.args)}")
         query = request.args.get("query", "")
@@ -43,7 +47,7 @@ def search():
         if image_urls_json:
             try:
                 import json
-                image_urls = json.loads(image_urls_json)
+                image_urls = json.loads(image_urls_jsonCHA)
                 print(f"DEBUG: Received {len(image_urls)} image URLs")
             except json.JSONDecodeError as e:
                 print(f"ERROR: Failed to parse image URLs: {image_urls_json[:100]}..., error: {e}")
@@ -56,6 +60,7 @@ def search():
 
         # Get optional parameters
         top_k = request.args.get("limit", default=50, type=int)
+        page = request.args.get("page", default=1, type=int)  # Handle page parameter
 
         filter_dict = {}
         min_price = request.args.get("min_price", type=float)
@@ -66,13 +71,9 @@ def search():
         max_bathrooms = request.args.get("max_bathrooms", type=float)
         
         if min_price is not None:
-            filter_dict["price_min"] = {
-                "$gte": min_price
-            }
+            filter_dict["price_min"] = {"$gte": min_price}
         if max_price is not None:
-            filter_dict["price_max"] = {
-                "$lte": max_price
-            }
+            filter_dict["price_max"] = {"$lte": max_price}
         if min_bedrooms is not None or max_bedrooms is not None:
             filter_dict["bedrooms"] = {
                 "$gte": min_bedrooms if min_bedrooms is not None else 0,
@@ -86,6 +87,7 @@ def search():
         if not filter_dict:
             filter_dict = None
 
+        # Apply pagination (optional, if supported by search_apartments)
         results = search_apartments(query, filter_dict, top_k, image_urls)
 
         print(f"DEBUG: Search completed, returned {len(results)} results")
@@ -98,21 +100,10 @@ def search():
         return jsonify({"error": error_message}), 500
 
 
-@search_bp.route("/api/apartment/preview/<string:apartment_id>", methods=["GET"])
+@search_bp.route("/api/apartment/preview/<string:apartment_id>", methods=["GET", "OPTIONS"])
 def apartment_preview(apartment_id):
-    """
-    Get preview data for a specific apartment by ID, with optional query parameter
-    to order images by relevance to the query
-
-    Args:
-        apartment_id (str): The ID of the apartment to retrieve preview data for
-
-    Query params:
-        query (str, optional): The search query to rank images by relevance
-
-    Returns:
-        JSON: Preview data for the apartment or error message
-    """
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
     try:
         query = request.args.get("query", "")
         apartment = get_apartment_preview_by_id(apartment_id, query)
@@ -125,26 +116,15 @@ def apartment_preview(apartment_id):
         return jsonify({"error": error_message}), 500
 
 
-@search_bp.route("/api/apartment/details/<string:apartment_id>", methods=["GET"])
+@search_bp.route("/api/apartment/details/<string:apartment_id>", methods=["GET", "OPTIONS"])
 def apartment_details(apartment_id):
-    """
-    Get full details for a specific apartment by ID
-
-    Args:
-        apartment_id (str): The ID of the apartment to retrieve details for
-
-    Query params:
-        query (str, optional): The search query to rank images by relevance
-
-    Returns:
-        JSON: All data for the apartment or error message
-    """
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
     try:
         query = request.args.get("query", "")
         apartment = get_apartment_details_by_id(apartment_id, query)
         if apartment is None:
             return jsonify({"error": "Apartment not found"}), 404
-
         return jsonify({"apartment": apartment})
     except Exception as e:
         error_message = f"Error in apartment details endpoint: {str(e)}"
