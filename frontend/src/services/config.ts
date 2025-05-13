@@ -1,7 +1,7 @@
 // Frontend configuration
 
 // API base URL - can be overridden with environment variables
-export const API_BASE_URL = "https://iris-va88.onrender.com";
+export const API_BASE_URL = "https://iris-m1d3.onrender.com";
 
 // API endpoints
 export const API_ENDPOINTS = {

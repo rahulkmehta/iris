@@ -9,11 +9,11 @@ def create_app():
     CORS(
         app,
         origins=[
-            "https://iris-sigma-ebon.vercel.app",
+            "https://iris-1-jm40.onrender.com",
             "http://localhost:8080",
             "http://localhost:8081",
             "http://localhost:4173",
-            "*.vercel.app"
+            "*.onrender.com"
         ],
         supports_credentials=True,
         allow_headers=["Content-Type", "Authorization", "Accept"],
