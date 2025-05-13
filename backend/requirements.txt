@@ -5,3 +5,4 @@ python-dotenv==1.0.1
 pinecone-client==3.2.0
 gunicorn==21.2.0
 openai==1.13.3
+httpx
