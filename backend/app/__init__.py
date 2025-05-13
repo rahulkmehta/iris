@@ -4,6 +4,7 @@ from app.routes import search_bp
 
 def create_app():
     app = Flask(__name__)
+    app.url_map.strict_slashes = False
 
     # Configure CORS
     CORS(
