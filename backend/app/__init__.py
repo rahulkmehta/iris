@@ -10,6 +10,7 @@ def create_app():
         app,
         origins=[
             "https://iris-1-1xcg.onrender.com",
+            "https://www.irisrents.com",
             "http://localhost:8080",
             "http://localhost:8081",
             "http://localhost:4173",
