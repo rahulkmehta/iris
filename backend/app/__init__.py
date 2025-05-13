@@ -9,7 +9,7 @@ def create_app():
     CORS(
         app,
         origins=[
-            "https://iris-1-jm40.onrender.com",
+            "https://iris-1-0x5r.onrender.com",
             "http://localhost:8080",
             "http://localhost:8081",
             "http://localhost:4173",
